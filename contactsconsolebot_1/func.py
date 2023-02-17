@@ -27,7 +27,8 @@ def hello():
 @exepting
 def add(name, phone=None): #add data to phone book
     if name in contacts:
-        return 'Use more phone'
+        contacts[name].add_phone(phone)
+        return 'You add phone {phone} to {name}'
     record = Record(name, phone)
     contacts.add_record(record)
     return f'You added {name} with contact {phone}'
@@ -40,11 +41,11 @@ def change(name, old_phone, new_phone):
 
 
 @exepting #output phone numbers of contact
-def phone(name):
+def what_phone(name):
     for key, data in contacts.items():
         if key == name:
             return f'Contact {name} have phone/es {" ".join([phone.value for phone in data.phones])}'
-    return "no such name"
+    return "No such name"
 
 
 @exepting #Show contacts
@@ -54,14 +55,6 @@ def show_all(*args):
 @exepting
 def exiting():
     return 'Good bye'
-
-@exepting
-def add_phone(name, phone):
-    if not contacts.get(name):
-        add(name, phone)
-    else:
-        contacts[name].add_phone(phone)
-        return f'You add phone {phone} to {name}'
 
 @exepting
 def deliting(name, phone):
@@ -76,11 +69,10 @@ commands = {
     "add": add,
     "change": change,
     "show all": show_all,
-    "phone": phone,
+    "what phone": what_phone,
     "good bye": exiting,
     "delite": deliting,
-    "exit": exiting,
-    "more phone": add_phone
+    "exit": exiting
 }
 
 

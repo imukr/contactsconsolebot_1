@@ -1,21 +1,27 @@
-from collections import UserDict, UserList
+import re
+from collections import UserDict
 
 class Field:
     def __init__(self, value):
         self.value = value
+
 
 class Name(Field):
     pass
 
 
 class Phone(Field):
-    pass
+    def __init__(self, phone=None):
+        if re.match(r"^(096|097|098|099|050|093|073|063)\d{7}", phone):
+            self.value = phone
+        else:
+            raise ValueError("It's not a telephone number")
 
 class AdressBook(UserDict):
 
     def add_record(self, record):
         self.data[record.name.value] = record
-        # print(dir(self.data[record.name.value]))
+        print(dir(self.data[record.name.value]))
 
 
 class Record:
