@@ -28,11 +28,9 @@ class Record:
 
     def __init__(self, name, phone=None):
         self.name = Name(name)
+        self.phones = []
         if phone:
-            self.phones = [Phone(phone)]
-        else:
-            self.phones = []
-
+            self.add_phone(phone)
 
 
     def add_phone(self, phone):
