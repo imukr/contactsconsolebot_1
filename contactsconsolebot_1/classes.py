@@ -49,6 +49,22 @@ class AdressBook(UserDict):
         return '\n'.join([f'Contact {name} have a phone/es {" ".join([phone.value for phone in data.phones])} and have a birthday {data.birthday.value}' for name, data in
                           self.data.items()])
 
+    def iterator(self, count=5):
+        page = []
+        i = 0
+
+        for record in self.data.values():
+            page.append(record)
+            i += 1
+
+            if i == count:
+                yield page
+                page = []
+                i = 0
+
+        if page:
+            yield page
+
 
 
 class Record:

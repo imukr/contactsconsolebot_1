@@ -50,7 +50,15 @@ def what_phone(name):
 
 @exepting #Show contacts
 def show_all(*args):
-    return contacts.get_all_record()
+    contact_list = ''
+    page_number = 1
+    for page in contacts.iterator():
+        contact_list += f'Page #{page_number}\n'
+        for record in page:
+            contact_list += f'{record.get_info()}\n'
+        page_number += 1
+    return contact_list
+
 
 @exepting
 def deliting_phone(name, phone):
