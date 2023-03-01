@@ -25,17 +25,17 @@ def hello():
 
 
 @exepting
-def add(name, phone=None): #add data to phone book
+def add(name, phone=None, birthday=None): #add data to phone book
     if name in contacts:
         contacts[name].add_phone(phone)
-        return 'You add phone {phone} to {name}'
-    record = Record(name, phone)
+        return f'You add phone {phone} to {name}'
+    record = Record(name, phone, birthday)
     contacts.add_record(record)
-    return f'You added {name} with contact {phone}'
+    return f'You added {name} with contact {phone} and birthday {birthday}'
 
 
 @exepting #change phone numbers of contact
-def change(name, old_phone, new_phone):
+def change_phone(name, old_phone, new_phone):
     contacts[name].change_phone(old_phone, new_phone)
     return f'You changed phone {old_phone} to {new_phone}'
 
@@ -50,16 +50,24 @@ def what_phone(name):
 
 @exepting #Show contacts
 def show_all(*args):
-    return '\n'.join([f'Name {name}: phone/es {" ".join([phone.value for phone in data.phones])}' for name, data in contacts.items()])
+    return contacts.get_all_record()
+
+@exepting
+def deliting_phone(name, phone):
+    contacts[name].remove_phone(phone)
+    return f'You delited phone {phone}'
+
+
+def day_to_birthday (name):
+    record = contacts[name]
+    return f"Days to next birthday of this {name} will be in {record.day_to_birthday()}."
+
 
 @exepting
 def exiting():
     return 'Good bye'
 
-@exepting
-def deliting(name, phone):
-    contacts[name].remove_phone(phone)
-    return f'You delited phone {phone}'
+
 
 '''
 commands for using same functions
@@ -67,16 +75,17 @@ commands for using same functions
 commands = {
     "hello": hello,
     "add": add,
-    "change": change,
-    "show all": show_all,
+    "change_phone": change_phone,
     "what phone": what_phone,
+    "show all": show_all,
+    "delite_phone": deliting_phone,
+    "day": day_to_birthday,
     "good bye": exiting,
-    "delite": deliting,
     "exit": exiting
 }
 
 
-# @exepting
+
 def extracting_commands(entered_data):
     set_commands = entered_data.lower().strip()
     for command in commands:

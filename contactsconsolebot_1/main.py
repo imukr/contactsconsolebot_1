@@ -5,6 +5,9 @@ def main():
         user_date = input("Enter set of command: ")
         result = extracting_commands(user_date)
         print(result)
+        if result == 'Good bye':
+            break
+
 
 if __name__ == '__main__':
     main()
