@@ -4,7 +4,16 @@ import re
 
 class Field:
     def __init__(self, value):
+        self._value = None
         self.value = value
+
+    @property
+    def value(self):
+        return self._value
+
+    @value.setter
+    def value(self, value):
+        self._value = value
 
 
 class Name(Field):
@@ -12,26 +21,27 @@ class Name(Field):
 
 
 class Phone(Field):
-    def __init__(self, phone=None):
-        if re.match(r"^(096|097|098|099|050|093|073|063)\d{7}", phone):
-            self.value = phone
+    @Field.value.setter
+    def value(self, value):
+        if re.match(r"^(096|097|098|099|050|093|073|063)\d{7}", value):
+            self._value = value
         else:
             raise ValueError("It's not a telephone number")
 
-class Birthday(Field):
-    def __init__(self, birthday):
 
+class Birthday(Field):
+    @Field.value.setter
+    def value(self, value):
         date_format = '%d.%m.%Y'
 
         try:
-            date_birthday = datetime.strptime(birthday, date_format)
-            self.value = date_birthday.date()
+            date_birthday = datetime.strptime(value, date_format)
+            self._value = date_birthday.date()
 
         except TypeError:
 
             raise TypeError(
                 "Incorrect data format for birthday, should be DD.MM.YYYY")
-
 
 
 class AdressBook(UserDict):
@@ -72,6 +82,7 @@ class Record:
     def __init__(self, name, phone=None, birthday=None):
         self.name = Name(name)
         self.phones = []
+        self.birthday = None
         if phone:
             self.add_phone(phone)
         if birthday:
@@ -106,3 +117,15 @@ class Record:
             next_birthday_year += 1
         next_birthday = datetime(year=next_birthday_year, month=birthday.month, day=birthday.day)
         return (today - next_birthday.date()).days
+
+    def get_info(self):
+        phones_info = ''
+        birthday_info = ''
+
+        for phone in self.phones:
+            phones_info += f'{phone.value}, '
+
+        if self.birthday:
+            birthday_info = f' Birthday : {self.birthday.value}'
+
+        return f'{self.name.value} : {phones_info[:-2]}{birthday_info}'
