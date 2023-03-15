@@ -1,5 +1,6 @@
 from datetime import datetime
 from collections import UserDict
+import pickle
 import re
 
 class Field:
@@ -46,6 +47,11 @@ class Birthday(Field):
 
 class AdressBook(UserDict):
 
+    def __init__(self):
+        super().__init__()
+
+        self.load_contacts_from_file()
+
     def add_record(self, record):
         self.data[record.name.value] = record
 
@@ -56,8 +62,23 @@ class AdressBook(UserDict):
         del self.data[name]
 
     def get_all_record(self):
-        return '\n'.join([f'Contact {name} have a phone/es {" ".join([phone.value for phone in data.phones])} and have a birthday {data.birthday.value}' for name, data in
-                          self.data.items()])
+        return self.data
+
+    def search(self, value):
+        record_result = []
+        for record in self.get_all_record().values():
+            if value in record.name.value:
+                record_result.append(record)
+                continue
+
+            for phone in record.phones:
+                if value in phone.value:
+                    record_result.append(record)
+
+        if not record_result:
+            raise ValueError("Contacts with this value does not exist.")
+        return record_result
+
 
     def iterator(self, count=5):
         page = []
@@ -74,6 +95,17 @@ class AdressBook(UserDict):
 
         if page:
             yield page
+
+    def save_contacts_to_file(self):
+        with open('address_book.txt', 'wb') as file:
+            pickle.dump(self.data, file)
+
+    def load_contacts_from_file(self):
+        try:
+            with open('address_book.txt', 'rb') as file:
+                self.data = pickle.load(file)
+        except FileNotFoundError:
+            pass
 
 
 

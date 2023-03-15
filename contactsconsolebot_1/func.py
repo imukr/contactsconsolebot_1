@@ -71,6 +71,16 @@ def day_to_birthday (name):
     return f"Days to next birthday of this {name} will be in {record.day_to_birthday()}."
 
 
+# @exepting
+def search_func(value):
+    search_records = ''
+    records = contacts.search(value.strip())
+
+    for record in records:
+        search_records += f"{record.get_info()}\n"
+    return search_records
+
+
 @exepting
 def exiting():
     return 'Good bye'
@@ -88,6 +98,7 @@ commands = {
     "show all": show_all,
     "delite_phone": deliting_phone,
     "day": day_to_birthday,
+    "search": search_func,
     "good bye": exiting,
     "exit": exiting
 }
