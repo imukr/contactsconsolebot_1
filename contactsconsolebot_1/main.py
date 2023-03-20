@@ -1,5 +1,6 @@
 from func import extracting_commands, contacts
 
+
 def main():
     try:
         while True:
@@ -10,6 +11,7 @@ def main():
                 break
     finally:
         contacts.save_contacts_to_file()
+
 
 if __name__ == '__main__':
     main()

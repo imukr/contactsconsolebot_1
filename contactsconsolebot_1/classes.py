@@ -1,7 +1,6 @@
 from collections import UserDict
 from contextlib import suppress
 from datetime import datetime
-import os
 import pickle
 import re
 
@@ -36,16 +35,11 @@ class Phone(Field):
 class Birthday(Field):
     @Field.value.setter
     def value(self, value):
-        date_format = '%d.%m.%Y'
-
-        try:
-            date_birthday = datetime.strptime(value, date_format)
-            self._value = date_birthday.date()
-
-        except TypeError:
-
-            raise TypeError(
-                "Incorrect data format for birthday, should be DD.MM.YYYY")
+        today = datetime.now().date()
+        birth_date = datetime.strptime(value, '%Y-%m-%d').date()
+        if birth_date > today:
+            raise ValueError("Birthday must be less than current year and date.")
+        self._value = value
 
 
 class AdressBook(UserDict):
@@ -58,18 +52,12 @@ class AdressBook(UserDict):
     def add_record(self, record):
         self.data[record.name.value] = record
 
-    def get_record(self, name):
-        return self.data.get(name)
-
     def remove_record(self, name):
         del self.data[name]
 
-    def get_all_record(self):
-        return self.data
-
     def search(self, value):
         record_result = []
-        for record in self.get_all_record().values():
+        for record in self.data.values():
             if value in record.name.value:
                 record_result.append(record)
                 continue
@@ -104,7 +92,8 @@ class AdressBook(UserDict):
 
     def load_contacts_from_file(self):
         with suppress(FileNotFoundError):
-            os.remove('address_book.txt')
+            with open('address_book.txt', 'rb') as file:
+                self.data = pickle.load(file)
 
 
 class Record:
@@ -121,14 +110,14 @@ class Record:
         self.phones.append(Phone(phone))
 
     def remove_phone(self, phone):
-        for elem in self.phones:
-            if elem.value == phone:
-                self.phones.remove(elem)
+        for phone in self.phones:
+            if phone.value == phone:
+                self.phones.remove(phone)
 
     def change_phone(self, old_phone, new_phone):
-        for elem in self.phones:
-            if elem.value == old_phone:
-                elem.value = new_phone
+        for phone in self.phones:
+            if phone.value == old_phone:
+                phone.value = new_phone
 
     def add_birthday(self, birthday):
         self.birthday = Birthday(birthday)
@@ -145,13 +134,11 @@ class Record:
         return (today - next_birthday.date()).days
 
     def get_info(self):
-        phones_info = ''
         birthday_info = ''
 
-        for phone in self.phones:
-            phones_info += f'{phone.value}, '
+        phones_info = [phone.value for phone in self.phones]
 
         if self.birthday:
             birthday_info = f' Birthday : {self.birthday.value}'
 
-        return f'{self.name.value} : {phones_info[:-2]}{birthday_info}'
+        return f'{self.name.value} : {phones_info}{birthday_info}'

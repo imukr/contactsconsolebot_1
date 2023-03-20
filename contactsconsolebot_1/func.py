@@ -1,10 +1,9 @@
 from classes import AdressBook, Record
 
-
 contacts = AdressBook()
 
 
-def exepting(func): #catching errors
+def exepting(func):  # catching errors
     def inner(*args, **kwargs):
         try:
             return func(*args, **kwargs)
@@ -16,6 +15,7 @@ def exepting(func): #catching errors
             return 'Please print: name and number'
         except TypeError:
             return 'Wrong command.'
+
     return inner
 
 
@@ -25,7 +25,7 @@ def hello():
 
 
 @exepting
-def add(name, phone=None, birthday=None): #add data to phone book
+def add(name, phone=None, birthday=None):  # add data to phone book
     if name in contacts:
         contacts[name].add_phone(phone)
         return f'You add phone {phone} to {name}'
@@ -34,13 +34,13 @@ def add(name, phone=None, birthday=None): #add data to phone book
     return f'You added {name} with contact {phone} and birthday {birthday}'
 
 
-@exepting #change phone numbers of contact
+@exepting  # change phone numbers of contact
 def change_phone(name, old_phone, new_phone):
     contacts[name].change_phone(old_phone, new_phone)
     return f'You changed phone {old_phone} to {new_phone}'
 
 
-@exepting #output phone numbers of contact
+@exepting  # output phone numbers of contact
 def what_phone(name):
     for key, data in contacts.items():
         if key == name:
@@ -48,7 +48,7 @@ def what_phone(name):
     return "No such name"
 
 
-@exepting #Show contacts
+@exepting  # Show contacts
 def show_all(*args):
     contact_list = ''
     page_number = 1
@@ -66,7 +66,7 @@ def deliting_phone(name, phone):
     return f'You delited phone {phone}'
 
 
-def day_to_birthday (name):
+def day_to_birthday(name):
     record = contacts[name]
     return f"Days to next birthday of this {name} will be in {record.day_to_birthday()}."
 
@@ -86,7 +86,6 @@ def exiting():
     return 'Good bye'
 
 
-
 '''
 commands for using same functions
 '''
@@ -102,7 +101,6 @@ commands = {
     "good bye": exiting,
     "exit": exiting
 }
-
 
 
 def extracting_commands(entered_data):
