@@ -1,7 +1,10 @@
-from datetime import datetime
 from collections import UserDict
+from contextlib import suppress
+from datetime import datetime
+import os
 import pickle
 import re
+
 
 class Field:
     def __init__(self, value):
@@ -79,7 +82,6 @@ class AdressBook(UserDict):
             raise ValueError("Contacts with this value does not exist.")
         return record_result
 
-
     def iterator(self, count=5):
         page = []
         i = 0
@@ -101,16 +103,11 @@ class AdressBook(UserDict):
             pickle.dump(self.data, file)
 
     def load_contacts_from_file(self):
-        try:
-            with open('address_book.txt', 'rb') as file:
-                self.data = pickle.load(file)
-        except FileNotFoundError:
-            pass
-
+        with suppress(FileNotFoundError):
+            os.remove('address_book.txt')
 
 
 class Record:
-
     def __init__(self, name, phone=None, birthday=None):
         self.name = Name(name)
         self.phones = []
@@ -120,16 +117,13 @@ class Record:
         if birthday:
             self.add_birthday(birthday)
 
-
     def add_phone(self, phone):
         self.phones.append(Phone(phone))
-
 
     def remove_phone(self, phone):
         for elem in self.phones:
             if elem.value == phone:
                 self.phones.remove(elem)
-
 
     def change_phone(self, old_phone, new_phone):
         for elem in self.phones:
